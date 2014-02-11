@@ -1,0 +1,4 @@
+PyYAML==3.10
+hazm==0.1
+nltk==2.0.4
+wsgiref==0.1.2
