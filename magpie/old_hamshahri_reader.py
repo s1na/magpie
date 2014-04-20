@@ -7,10 +7,15 @@ class OldHamshahriReader(object):
         self.root = root
         self.invalids = []
 
-    def docs(self):
+    def docs(self, count):
         docs = []
+        c = 0
+        limit_exceeded = False
         for root, dirs, files in os.walk(self.root):
             for name in files:
+                if c == count:
+                    limit_exceeded = True
+                    break
                 if name in self.invalids:
                     continue
 
@@ -24,11 +29,17 @@ class OldHamshahriReader(object):
                         continue
                     doc = {}
                     doc['cat'] = catl[4:].strip()
-                    doc['text'] = f.read()
+                    doc['text'] = f.read().strip().decode('utf-8')
                     docs.append(doc)
 
+                    f.close()
+
                 except Exception as e:
-                        print('error in reading:', name)
+                    print e
+                    print('error in reading:', name)
+                c += 1
+            if limit_exceeded:
+                break
 
         return docs
                    # for element in elements.getElementsByTagName('DOC'):
