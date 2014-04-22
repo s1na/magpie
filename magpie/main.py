@@ -26,7 +26,7 @@ if __name__ == '__main__':
     docs = []
     normalizer = Normalizer()
     stemmer = Stemmer()
-    for doc in rd.docs(count=2000):
+    for doc in rd.docs(count=config.documents_count):
         doc['text'] = normalizer.normalize(doc['text'])
         doc['words'] = [stemmer.stem(word) for word in word_tokenize(doc['text'])]
         counter.update([doc['cat']])
@@ -38,7 +38,8 @@ if __name__ == '__main__':
         all_words.extend(doc['words'])
 
     dist = nltk.FreqDist(word for word in all_words)
-    word_features = [word for word in set(all_words) if len(word) > 4 and dist[word] > 10]
+    word_features = [word for word in set(all_words) if len(word) > 4 and dist[word] > 40]
+    print len(word_features) / float(len(all_words)) * 100.0
     features_set = [(doc_features(doc, word_features), doc['cat']) for doc in docs]
     train_set, test_set = features_set[:len(docs)/2], features_set[len(docs)/2:len(docs)]
     classifier = nltk.NaiveBayesClassifier.train(train_set)
