@@ -9,6 +9,9 @@ import config
 from old_hamshahri_reader import OldHamshahriReader
 
 
+def dimension_reduction(terms, dist):
+    return [term for term in set(terms) if len(term) > 4 and dist[term] > 40]
+
 def doc_features(doc, dist_words):
     words_set = set(doc['words'])
     features = {}
@@ -38,8 +41,10 @@ if __name__ == '__main__':
         all_words.extend(doc['words'])
 
     dist = nltk.FreqDist(word for word in all_words)
-    word_features = [word for word in set(all_words) if len(word) > 4 and dist[word] > 40]
+
+    word_features = dimension_reduction(all_words, dist)
     print len(word_features) / float(len(all_words)) * 100.0
+
     features_set = [(doc_features(doc, word_features), doc['cat']) for doc in docs]
     train_set, test_set = features_set[:len(docs)/2], features_set[len(docs)/2:len(docs)]
     classifier = nltk.NaiveBayesClassifier.train(train_set)
