@@ -1,4 +1,6 @@
-PyYAML==3.10
+PyYAML==3.11
 hazm==0.1
 nltk==2.0.4
+numpy==1.8.1
+scikit-learn==0.14.1
 wsgiref==0.1.2
