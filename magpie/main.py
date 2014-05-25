@@ -25,7 +25,6 @@ def doc_features(doc, dist_words):
 
 def evaluate(classifier, gold, labels):
     accuracy, precision, recall = 0.0, 0.0, 0.0
-    #confusion_matrix = len(labels) * [len(labels) * [0]]
     confusion_matrix = np.zeros((len(labels), len(labels)))
     results = classifier.batch_classify([fs for (fs,l) in gold])
 
@@ -44,42 +43,9 @@ def evaluate(classifier, gold, labels):
 
     return precision, recall, accuracy
 
-#    TP, FP, FN, TN = 0, 1, 2, 3
-    #total_tp, total_fp, total_fn, total_tn = 0, 0, 0, 0
-
-    #labels_stats = dict([(l, [0, 0, 0, 0]) for l in labels]) # TP, FP, FN, TN
-    #results = classifier.batch_classify([fs for (fs,l) in gold])
-    ##correct = [l==r for ((fs,l), r) in zip(gold, results)]
-    #for ((fs, l), r) in zip(gold, results):
-        ## True Positive
-        #if l == r:
-            #labels_stats[l][TP] += 1
-        #else:
-            ## False Positive
-            #labels_stats[r][FP] += 1
-
-            ## False Negative
-            #labels_stats[l][FN] += 1
-
-            ## True Negative
-            #for label in labels:
-                #if label != l and label != r:
-                    #labels_stats[label][TN] += 1
-
-    #vals = labels_stats.values()
-    #total_tp = sum([l[TP] for l in vals])
-    #total_fp = sum([l[FP] for l in vals])
-    #total_fn = sum([l[FN] for l in vals])
-    #total_tn = sum([l[TN] for l in vals])
-#    precision = float(total_tp) / (total_tp + total_fp)
-    #recall = float(total_tp) / (total_tp + total_fn)
-#    accuracy = float(total_tp + total_tn) / (total_tp + total_tn + total_tn + total_fn)
-
-
 
 if __name__ == '__main__':
     rd = OldHamshahriReader(config.corpora_root)
-    #docs = rd.docs(count=100)
     counter = Counter()
     docs = []
     normalizer = Normalizer()
@@ -115,7 +81,6 @@ if __name__ == '__main__':
     else:
         raise ValueError, "Classifier type unknown."
 
-    #print nltk.classify.accuracy(classifier, test_set)
     precision, recall, accuracy = evaluate(classifier, test_set, counter.keys())
     print "Precision: %g\tRecall: %g\tAccuracy: %g" % (precision, recall, accuracy)
     #classifier.show_most_informative_features(10)
