@@ -1,10 +1,12 @@
 # -*- coding: utf-8 -*-
 from collections import Counter
+import cPickle as pickle
 
 import nltk
+from sklearn.svm import SVC, LinearSVC
 import numpy as np
 from hazm import Normalizer, Stemmer, word_tokenize
-from hazm.HamshahriReader import HamshahriReader
+#from hazm.HamshahriReader import HamshahriReader
 
 import config
 from old_hamshahri_reader import OldHamshahriReader
@@ -78,8 +80,6 @@ def evaluate(classifier, gold, labels):
 if __name__ == '__main__':
     rd = OldHamshahriReader(config.corpora_root)
     #docs = rd.docs(count=100)
-    #rd = HamshahriReader(config.corpora_root)
-    #docs = [doc for doc in rd.docs()]
     counter = Counter()
     docs = []
     normalizer = Normalizer()
@@ -102,9 +102,20 @@ if __name__ == '__main__':
 
     features_set = [(doc_features(doc, word_features), doc['cat']) for doc in docs]
     train_set, test_set = features_set[:len(docs)/2], features_set[len(docs)/2:len(docs)]
-    classifier = nltk.NaiveBayesClassifier.train(train_set)
+
+    classifier = None
+    if config.classifier_type == 'NaiveBayes':
+        classifier = nltk.NaiveBayesClassifier.train(train_set)
+    elif config.classifier_type == 'DecisionTree':
+        classifier = nltk.classify.DecisionTreeClassifier.train(train_set, entropy_cutoff=0, support_cutoff=0)
+    elif config.classifier_type == 'SVC':
+        classifier = nltk.classify.scikitlearn.SklearnClassifier(SVC(), sparse=False).train(train_set)
+    elif config.classifier_type == 'LinearSVC':
+        classifier = nltk.classify.scikitlearn.SklearnClassifier(LinearSVC(), sparse=False).train(train_set)
+    else:
+        raise ValueError, "Classifier type unknown."
 
     #print nltk.classify.accuracy(classifier, test_set)
     precision, recall, accuracy = evaluate(classifier, test_set, counter.keys())
     print "Precision: %g\tRecall: %g\tAccuracy: %g" % (precision, recall, accuracy)
-    classifier.show_most_informative_features(10)
+    #classifier.show_most_informative_features(10)
