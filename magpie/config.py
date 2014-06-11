@@ -3,6 +3,9 @@ corpora_path = 'corpora/sample.xml'
 corpora_root = 'corpora/old_hamshahri/separated'
 #corpora_root = 'corpora/hamshahri'
 
-documents_count = 1000
+documents_count = 2000
 
-classifier_type = 'LinearSVC'
+classifier_type = 'NaiveBayes'
+
+semi_supervised = True
+unlabeled_documents_count = 1000
