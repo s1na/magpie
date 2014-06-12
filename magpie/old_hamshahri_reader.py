@@ -42,18 +42,39 @@ class OldHamshahriReader(object):
                 break
 
         return docs
-                   # for element in elements.getElementsByTagName('DOC'):
-                            #doc = {}
-                            #doc['id'] = element.getElementsByTagName('DOCID')[0].childNodes[0].data
-                            #doc['issue'] = element.getElementsByTagName('ISSUE')[0].childNodes[0].data
 
-                            #for cat in element.getElementsByTagName('CAT'):
-                                    #doc['categories_'+ cat.attributes['xml:lang'].value] = cat.childNodes[0].data.split('.')
+    def sklearn_docs(self, count):
+        docs = []
+        labels = []
+        c = 0
+        limit_exceeded = False
+        for root, dirs, files in os.walk(self.root):
+            for name in files:
+                if c == count:
+                    limit_exceeded = True
+                    break
+                if name in self.invalids:
+                    continue
 
-                            #doc['title'] = element.getElementsByTagName('TITLE')[0].childNodes[1].data
-                            #doc['text'] = ''
-                            #for item in element.getElementsByTagName('TEXT')[0].childNodes:
-                                    #if item.nodeType == 4:  # CDATA
-                                            #doc['text'] += item.data
-                   #         yield doc
+                try:
+                    f = open(os.path.join(root, name))
+                    f.readline()
+                    f.readline()
+                    catl = f.readline()
+                    if not '.Cat' in catl:
+                        print('Doc doesnt have category, ', name)
+                        continue
+                    labels.append(catl[4:].strip())
+                    docs.append(f.read().strip().decode('utf-8'))
+
+                    f.close()
+
+                except Exception as e:
+                    print e
+                    print('error in reading:', name)
+                c += 1
+            if limit_exceeded:
+                break
+
+        return docs, labels
 
