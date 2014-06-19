@@ -8,6 +8,8 @@ documents_count = 2000
 TOT_DOCS = 4000
 
 classifier_type = 'NaiveBayes'
+CLASSIFIER = 'LinearSVC'
+SELF_TRAINING = False
 
 semi_supervised = True
 unlabeled_documents_count = 1000
